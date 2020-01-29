@@ -51,6 +51,7 @@ def delete_account():
                 data = (user, crypted_passwd)
                 cursor.execute(sql_sentence, data)
                 connection.commit()
+                print("Acount deleted succefully!")
 
             elif option.lower() == "n":
                 print("Then you are welcome.")
@@ -68,58 +69,85 @@ def delete_account():
         print("bye")
 
 def login_account():
-
+    
+    trys = 0
+    
     try:
+        while trys != 3:
+            user = input("Enter the user name: ")
+            
+            passwd = getpass.getpass(prompt = "Password: ", stream = None)
+            crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+            sql_sentence = "SELECT * from cred WHERE username = ? AND password = ?"
+            data = (user, crypted_passwd)
 
-        user = input("Enter the user name: ")
-        passwd = getpass.getpass(prompt = "Password: ", stream = None)
-        crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-        sql_sentence = "SELECT * from cred WHERE username = ? AND password = ?"
-        data = (user, crypted_passwd)
+            connection = sqlite3.connect('data.db')
+            cursor = connection.cursor()
+            cursor.execute(sql_sentence, data)
+            connection.commit()
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-        cursor.execute(sql_sentence, data)
-        connection.commit()
+            print("login...")
+            time.sleep(3)
 
-        print("login...")
-        time.sleep(3)
+            if cursor.fetchone() is not None:
+                print("Welcome")
+                trys = 3
+            else:
+                print("Login failed!\nTry it again...")
+                trys += 1
 
-        if cursor.fetchone() is not None:
-            print("Welcome")
-        else:
-            print("Login failed")
-
-        cursor.close()
-        connection.close()
+            cursor.close()
+            connection.close()
         
     except KeyboardInterrupt:
         print("bye")
  
 def create_account():
 
-    try:
-
-        user = input("Enter the user name: ")
-        passwd = getpass.getpass(prompt = "Password: ", stream = None)
-        crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-        sql_sentence = "INSERT INTO cred(username, password) VALUES(?, ?)"
-        data = (user, crypted_passwd)
-
-        print("Creating acount...")
-
-        time.sleep(3)
-
-        connection = sqlite3.connect('data.db')
+    with sqlite3.connect('data.db') as connection:
         cursor = connection.cursor()
-        cursor.execute(sql_sentence, data)
-        connection.commit()
-        cursor.close()
-        connection.close()
-        print("User created successfully")
+        try:
 
-    except KeyboardInterrupt:
-        print("bye")  
+            user = input("Enter the user name: ") 
+            cursor.execute("SELECT * from cred WHERE username = (?)", (user,))
+            connection.commit()
+        
+            if cursor.fetchone() is not None:
+                print("This name is already in use...")
+                cursor.close()
+                #connection.close()
+                #exit()
+            else:
+                passwd = getpass.getpass(prompt = "Password: ", stream = None)
+                retyped_passwd = getpass.getpass(prompt = "Re-type your password: ", stream = None)
+                if retyped_passwd == passwd:
+
+                    crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+                    sql_sentence = "INSERT INTO cred(username, password) VALUES(?, ?)"
+                    data = (user, crypted_passwd)
+
+                    print("Creating acount...")
+
+                    time.sleep(3)
+
+                    #connection = sqlite3.connect('data.db')
+                    #cursor = connection.cursor() 
+                    cursor.execute(sql_sentence, data)
+                    connection.commit()
+                    cursor.close()
+                    #connection.close()
+                    print("User created successfully")
+                else:
+                    print("The passwords do not match!")
+                    cursor.close()
+                    #connection.close()
+                    #exit()
+        except KeyboardInterrupt:
+            print("bye")
+            #connection.rollback()
+        #finally:
+            #cursor.close()
+            #connection.close()
 
 if __name__=='__main__':
     main()
