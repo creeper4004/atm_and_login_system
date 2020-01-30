@@ -24,66 +24,19 @@ def main():
 
 
 def delete_account():
-
-    try:
-
-        user = input("Enter the user name: ")
-        passwd = getpass.getpass(prompt = "Password: ", stream = None)
-        crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-        sql_sentence = "SELECT * from cred WHERE username = ? AND password = ?"
-        data = (user, crypted_passwd)
-
-        connection = sqlite3.connect('data.db')
+    
+    with sqlite3.connect('data.db') as connection:
         cursor = connection.cursor()
-        cursor.execute(sql_sentence, data)
-        connection.commit()
+        try:
 
-        print("login...")
-        time.sleep(3)
-
-        if cursor.fetchone() is not None:
-            option = input("Are you complete sure to delete yout account? y/N: ")
-            if option.lower() == "y":
-                
-                print("Deleting acount...")
-                time.sleep(3)
-
-                sql_sentence = "DELETE from cred WHERE username = ? AND password = ?"
-                data = (user, crypted_passwd)
-                cursor.execute(sql_sentence, data)
-                connection.commit()
-                print("Acount deleted succefully!")
-
-            elif option.lower() == "n":
-                print("Then you are welcome.")
-            else: 
-                print("I dont know that option.")
-                print("Try it again")
-                delete_account()
-        else:
-            print("Login failed")
-
-        cursor.close()
-        connection.close()
-        
-    except KeyboardInterrupt:
-        print("bye")
-
-def login_account():
-    
-    trys = 0
-    
-    try:
-        while trys != 3:
             user = input("Enter the user name: ")
-            
             passwd = getpass.getpass(prompt = "Password: ", stream = None)
             crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
             sql_sentence = "SELECT * from cred WHERE username = ? AND password = ?"
             data = (user, crypted_passwd)
 
-            connection = sqlite3.connect('data.db')
-            cursor = connection.cursor()
+            #connection = sqlite3.connect('data.db')
+            #cursor = connection.cursor()
             cursor.execute(sql_sentence, data)
             connection.commit()
 
@@ -91,17 +44,70 @@ def login_account():
             time.sleep(3)
 
             if cursor.fetchone() is not None:
-                print("Welcome")
-                trys = 3
+                option = input("Are you complete sure to delete yout account? y/N: ")
+                if option.lower() == "y":
+                    
+                    print("Deleting acount...")
+                    time.sleep(3)
+
+                    sql_sentence = "DELETE from cred WHERE username = ? AND password = ?"
+                    data = (user, crypted_passwd)
+                    cursor.execute(sql_sentence, data)
+                    connection.commit()
+                    print("Acount deleted succefully!")
+
+                elif option.lower() == "n":
+                    print("Then you are welcome.")
+                else: 
+                    print("I dont know that option.")
+                    print("Try it again")
+                    delete_account()
             else:
-                print("Login failed!\nTry it again...")
-                trys += 1
+                print("Login failed")
 
             cursor.close()
             connection.close()
+            
+        except KeyboardInterrupt:
+            print("bye")
+        except:
+            connection.rollback()
+
+def login_account():
+    
+    with sqlite3.connection('data.db') as connection:
+        cursor = connection.cursor()
+        attempts = 0
         
-    except KeyboardInterrupt:
-        print("bye")
+        try:
+            while attempts >= 3:
+                user = input("Enter the user name: ")
+                
+                passwd = getpass.getpass(prompt = "Password: ", stream = None)
+                crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+                sql_sentence = "SELECT * from cred WHERE username = ? AND password = ?"
+                data = (user, crypted_passwd)
+
+                #connection = sqlite3.connect('data.db')
+                #cursor = connection.cursor()
+                cursor.execute(sql_sentence, data)
+                connection.commit()
+
+                print("login...")
+                time.sleep(3)
+
+                if cursor.fetchone() is not None:
+                    print("Welcome")
+                    attempts = 3
+                else:
+                    print("Login failed!\nTry it again...")
+                    attempts += 1
+
+                cursor.close()
+                connection.close()
+            
+        except KeyboardInterrupt:
+            print("bye")
  
 def create_account():
 
