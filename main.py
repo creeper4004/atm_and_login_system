@@ -2,9 +2,10 @@
 import os, getpass, sqlite3, hashlib, time
 
 def main():
+
     try:
         print("""WELCOME TO THE BEST LOGIN SYSTEM EVER CREATED!
-            1 to use an existing account.
+            1 to login account.
             2 to create account.
             3 to delete your account.
             4 to exit or use CTRL+C""")
@@ -145,6 +146,8 @@ def create_account():
         except KeyboardInterrupt:
             print("bye")
             #connection.rollback()
+        except:
+            connection.rollback()
         #finally:
             #cursor.close()
             #connection.close()
