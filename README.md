@@ -1,2 +1,1 @@
-#ATM AND LOGIN SYSTEM
-simple ATM and login system
+SIMPLE ATM AND LOGIN SYSTEM
