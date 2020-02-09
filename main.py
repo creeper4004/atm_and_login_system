@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 import os, getpass, sqlite3, hashlib, time
 from atm import *
-from art import *
 
 def main():
 
     try:
-        os.system("clear")
-        tprint("Login  system")
-        print("Welcome to the best login system ever created!")
-        print("""
+        #os.system("clear")
+        print("""Welcom to the best login system ever created!
             1 to login account.
             2 to create account.
             3 to delete your account.
-            4 to exit or use CTRL+C
-            """)
+            4 to exit or use CTRL+C""")
         option = int(input("Write your option: "))
         if option == 1:
             login_account()
@@ -55,7 +51,7 @@ def delete_account():
             time.sleep(3)
 
             if cursor.fetchone() is not None:
-                option = input("Are you complete sure to delete yout account? y/N: ")
+                option = input("Are you complete sure to delete your account? y/N: ")
                 if option.lower() == "y":
 
                     print("Deleting acount...")

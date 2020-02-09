@@ -3,12 +3,11 @@ from main import *
 
 def atm(username, user_id):
     try:
-        os.system("clear")
-        tprint("ATM")
+        #os.system("clear")
         print("Welcome {} to the best ATM ever created!".format(username))
         print("""
             1 to deposit money
-            2 to to take money out
+            2 to withdraw money
             3 to see how much money you have
             4 to deposit money to other client
             5 to quit or use CTRL+C
@@ -17,7 +16,7 @@ def atm(username, user_id):
         if option == 1:
             deposit_money(username, user_id)
         elif option == 2:
-            take_money_out(user_id)
+            withdraw_money(user_id)
         elif option == 3:
             actual_money = show_money(user_id)
             print("Your money is: {}".format(actual_money))
@@ -35,7 +34,7 @@ def deposit_money(username, user_id):
     with sqlite3.connect('data.db') as connection:
         cursor = connection.cursor()
         try:
-            input_money = int(input("Who much money do you want to deposit: "))
+            input_money = int(input("How much money do you want to deposit: "))
 
             actual_money = show_money(user_id)
 
@@ -59,12 +58,12 @@ def deposit_money(username, user_id):
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 
-def take_money_out(user_id):
+def withdraw_money(user_id):
     with sqlite3.connect('data.db') as connection:
         cursor = connection.cursor()
         user_id = int(user_id[0])
         try:
-            output_money = int(input("How much money do you want to get: "))
+            output_money = int(input("How much money do you wish to withdraw?: "))
             actual_money = show_money(user_id)
 
             print("Prosessing...")
