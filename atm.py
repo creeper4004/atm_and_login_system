@@ -3,7 +3,8 @@ from main import *
 
 def atm(username, user_id):
     try:
-        #os.system("clear")
+        os.system("clear")
+        tprint("ATM")
         print("Welcome {} to the best ATM ever created!".format(username))
         print("""
             1 to deposit money
@@ -34,7 +35,7 @@ def deposit_money(username, user_id):
     with sqlite3.connect('data.db') as connection:
         cursor = connection.cursor()
         try:
-            input_money = int(input("Who many money you go to deposit: "))
+            input_money = int(input("Who much money do you want to deposit: "))
 
             actual_money = show_money(user_id)
 

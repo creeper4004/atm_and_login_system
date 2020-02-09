@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 import os, getpass, sqlite3, hashlib, time
 from atm import *
+from art import *
 
 def main():
 
     try:
-        #os.system("clear")
-        print("""Welcom to the best login system ever created!
+        os.system("clear")
+        tprint("Login  system")
+        print("Welcome to the best login system ever created!")
+        print("""
             1 to login account.
             2 to create account.
             3 to delete your account.
-            4 to exit or use CTRL+C""")
+            4 to exit or use CTRL+C
+            """)
         option = int(input("Write your option: "))
         if option == 1:
             login_account()
