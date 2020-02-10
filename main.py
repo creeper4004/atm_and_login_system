@@ -6,6 +6,7 @@ def main():
 
     try:
         #os.system("clear")
+        #printing the main menu
         print("""Welcom to the best login system ever created!
             1 to login account.
             2 to create account.
@@ -29,27 +30,28 @@ def main():
     except Exception as e:
         print(e)
 
-
+#This function check that the user exists and then delete it, if so desired.
 def delete_account():
-
+    #connecting with the database sqlite
     with sqlite3.connect('data.db') as connection:
+        #creating a cursor
         cursor = connection.cursor()
         try:
-
+            #getting for the username and password
             user = input("Enter the user name: ")
             passwd = getpass.getpass(prompt = "Password: ", stream = None)
+            #encrypting and encoding password to save en the database
             crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
             sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
             data = (user, crypted_passwd)
 
-            #connection = sqlite3.connect('data.db')
-            #cursor = connection.cursor()
             cursor.execute(sql_sentence, data)
             connection.commit()
 
             print("login...")
             time.sleep(3)
 
+            #check if that account exist
             if cursor.fetchone() is not None:
                 option = input("Are you complete sure to delete your account? y/N: ")
                 if option.lower() == "y":
@@ -57,34 +59,37 @@ def delete_account():
                     print("Deleting acount...")
                     time.sleep(3)
 
+                    #delete account
                     sql_sentence = "DELETE from users WHERE username = (?) AND password = (?)"
                     data = (user, crypted_passwd)
                     cursor.execute(sql_sentence, data)
                     connection.commit()
                     print("Acount deleted succefully!")
-                    #connection.close()
+
 
                 elif option.lower() == "n":
                     print("Then you are welcome.")
-                    #connection.close()
+
                 else:
                     print("I dont know that option.")
                     print("Try it again")
                     delete_account()
-                    #connection.close()
             else:
                 print("Login failed")
-                #connection.close()
-
+        #waiting for errors
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
             print("\nbye\n")
+        #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 
+#This function just receive the username and password to return the user id
 def get_user_id(username, password):
+    #connecting with the database sqlite
     with sqlite3.connect('data.db') as connection:
+        #creating a cursor
         cursor = connection.cursor()
         try:
             sql_sentence = "SELECT id from users WHERE username = (?) AND password = (?)"
@@ -93,55 +98,56 @@ def get_user_id(username, password):
             connection.commit()
 
             user_id = cursor.fetchone()
+            # user_id it is received in the form of tuple and then becomes to int
             user_id = int(user_id[0])
-            #print(user_id)
-            #connection.close()
+            #and then returns it
             return user_id
+        #waiting for errors
         except Exception as e:
             print(e)
+        #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 
+#This function just This function check that the user exists and then login into the ATM system
 def login_account():
-
+    #connecting with the database sqlite
     with sqlite3.connect('data.db') as connection:
+        #creating a cursor
         cursor = connection.cursor()
         MAX_ATTEMPTS = 3
 
         try:
-            #print("is this shit happen?")
-            #while attempts >= 3:
             for attempts in range(MAX_ATTEMPTS):
-                username = input("Enter the user name: ")
 
+                #getting for the username and password
+                username = input("Enter the user name: ")
                 passwd = getpass.getpass(prompt = "Password: ", stream = None)
+                #encrypting and encoding password to save en the database
                 crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-                #cursor.execute("SELECT id from users where ucursor.execute("SELECT money from users WHERE username = (?)", (username_to,))sername = ? AND password = ?", (user, crypted_passwd))
-                #user_id = cursor.fetchone()
-                #print(user_id)
+                #login code
                 sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
                 data = (username, crypted_passwd)
-
                 cursor.execute(sql_sentence, data)
                 connection.commit()
                 print("login...")
                 time.sleep(3)
 
+                #check if that account exist
                 if cursor.fetchone() is not None:
-                    #print("Welcome")
                     user_id = get_user_id(username, crypted_passwd)
-                    #print(user_id)
                     attempts = MAX_ATTEMPTS
-                    #connection.close()
+                    #put the attempts to the max attempts and then call to the atm function
                     atm(username, user_id)
                     break
                 else:
                     print("Login failed!\nTry it again...")
-
+        #waiting for errors
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
             print("\nbye\n")
+        #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 

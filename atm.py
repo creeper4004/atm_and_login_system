@@ -3,7 +3,7 @@ from main import *
 
 def atm(username, user_id):
     try:
-        #os.system("clear")
+        os.system("clear")
         print("Welcome {} to the best ATM ever created!".format(username))
         print("""
             1 to deposit money
@@ -24,6 +24,9 @@ def atm(username, user_id):
             deposit_to_other_client(user_id, username)
         elif option == 5:
             print("\nbye\n")
+            exit()
+        else:
+            print("I dont know that option!")
             exit()
     except KeyboardInterrupt:
         print("\nbye\n")
