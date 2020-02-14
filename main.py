@@ -132,6 +132,7 @@ def get_user_id(username, password):
             print(e)
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
+
 #This function just This function check that the user exists and then login into the ATM system
 def login_account():
     #connecting with the database sqlite
@@ -157,25 +158,25 @@ def login_account():
                         print("Try it again!")
                         login_account()
                     else:
-                    #encrypting and encoding password to save en the database
-                    crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-                    #login code
-                    sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
-                    data = (username, crypted_passwd)
-                    cursor.execute(sql_sentence, data)
-                    connection.commit()
-                    print("login...")
-                    time.sleep(3)
+                        #encrypting and encoding password to save en the database
+                        crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+                        #login code
+                        sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
+                        data = (username, crypted_passwd)
+                        cursor.execute(sql_sentence, data)
+                        connection.commit()
+                        print("login...")
+                        time.sleep(3)
 
-                    #check if that account exist
-                    if cursor.fetchone() is not None:
-                        user_id = get_user_id(username, crypted_passwd)
-                        attempts = MAX_ATTEMPTS
-                        #put the attempts to the max attempts and then call to the atm function
-                        atm(username, user_id)
-                        break
-                    else:
-                        print("Login failed!\nTry it again...")
+                        #check if that account exist
+                        if cursor.fetchone() is not None:
+                            user_id = get_user_id(username, crypted_passwd)
+                            attempts = MAX_ATTEMPTS
+                            #put the attempts to the max attempts and then call to the atm function
+                            atm(username, user_id)
+                            break
+                        else:
+                            print("Login failed!\nTry it again...")
         #waiting for errors
         except Exception as e:
             print(e)
@@ -208,7 +209,8 @@ def create_account():
                 #ask to the database if that username its already in use
                 if cursor.fetchone() is not None:
                     print("This name is already in use...")
-                    exit()
+                    print("Try it again!")
+                    create_account()
                 else:
                     #getting for the password 2 times to check if one of the passwords its wrong
                     passwd = getpass.getpass(prompt = "Password: ", stream = None)
