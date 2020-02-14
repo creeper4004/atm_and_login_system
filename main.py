@@ -20,7 +20,6 @@ def main():
         #asking for the operation to do
         option = get_choice(["1","2","3","4"])
         option = int(option)
-        #option = int(input("Write your option: "))
         if option == 1:
             login_account()
         elif option == 2:
@@ -91,7 +90,7 @@ def delete_account():
                             data = (user, crypted_passwd)
                             cursor.execute(sql_sentence, data)
                             connection.commit()
-                            print("Acount deleted succefully!")
+                            print("Account deleted succefully!")
 
                         elif option.lower() == "n":
                             print("I'll see you later then!")

@@ -220,17 +220,17 @@ def deposit_to_other_client(user_id, username):
                                 exit()
                             else:
                                 print("I dont know that option!")
-                                exit()
+                                deposit_to_other_client(user_id, username)
                         else:
                             print("I dont know that option!")
-                            exit()
+                            deposit_to_other_client(user_id, username)
                 else:
                     print("Here we're supposed to write an amount!")
                     print("Try it again...")
                     deposit_to_other_client(user_id, username)
             else:
                 print("That user do not exist!")
-                exit()
+                deposit_to_other_client(user_id, username)
         #waiting for errors
         except Exception as e:
             print(e)
