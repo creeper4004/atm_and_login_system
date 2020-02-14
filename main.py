@@ -53,43 +53,55 @@ def delete_account():
         cursor = connection.cursor()
         try:
             #getting for the username and password
-            user = input("Enter the user name: ")
-            passwd = getpass.getpass(prompt = "Password: ", stream = None)
-            #encrypting and encoding password to save en the database
-            crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-            sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
-            data = (user, crypted_passwd)
-
-            cursor.execute(sql_sentence, data)
-            connection.commit()
-
-            print("login...")
-            time.sleep(3)
-
-            #check if that account exist
-            if cursor.fetchone() is not None:
-                option = input("Are you complete sure to delete your account? y/N: ")
-                if option.lower() == "y":
-
-                    print("Deleting acount...")
-                    time.sleep(3)
-
-                    #delete account code
-                    sql_sentence = "DELETE from users WHERE username = (?) AND password = (?)"
+            username = input("Enter the username: ")
+            #checking if the fields username and password are empty
+            #to avoid errors
+            if(not (username and not username.isspace())):
+                print("You can't leave username field empty")
+                print("Try it again!")
+                delete_account()
+            else:
+                passwd = getpass.getpass(prompt = "Password: ", stream = None)
+                if(not (passwd and not passwd.isspace())):
+                    print("You can't leave passwod field empty")
+                    print("Try it again!")
+                    delete_account()
+                else:
+                    #encrypting and encoding password to save en the database
+                    crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+                    sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
                     data = (user, crypted_passwd)
+
                     cursor.execute(sql_sentence, data)
                     connection.commit()
-                    print("Acount deleted succefully!")
 
-                elif option.lower() == "n":
-                    print("I'll see you later then!")
-                    exit()
-                else:
-                    print("I dont know that option.")
-                    print("Try it again")
-                    delete_account()
-            else:
-                print("Login failed")
+                    print("login...")
+                    time.sleep(3)
+
+                    #check if that account exist
+                    if cursor.fetchone() is not None:
+                        option = input("Are you complete sure to delete your account? y/N: ")
+                        if option.lower() == "y":
+
+                            print("Deleting acount...")
+                            time.sleep(3)
+
+                            #delete account code
+                            sql_sentence = "DELETE from users WHERE username = (?) AND password = (?)"
+                            data = (user, crypted_passwd)
+                            cursor.execute(sql_sentence, data)
+                            connection.commit()
+                            print("Acount deleted succefully!")
+
+                        elif option.lower() == "n":
+                            print("I'll see you later then!")
+                            exit()
+                        else:
+                            print("I dont know that option.")
+                            print("Try it again")
+                            delete_account()
+                    else:
+                        print("Login failed")
         #waiting for errors
         except Exception as e:
             print(e)
@@ -131,28 +143,39 @@ def login_account():
         try:
             for attempts in range(MAX_ATTEMPTS):
                 #getting for the username and password
+                #checking if the fields username and password are empty
+                #to avoid errors    
                 username = input("Enter the user name: ")
-                passwd = getpass.getpass(prompt = "Password: ", stream = None)
-                #encrypting and encoding password to save en the database
-                crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-                #login code
-                sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
-                data = (username, crypted_passwd)
-
-                cursor.execute(sql_sentence, data)
-                connection.commit()
-                print("login...")
-                time.sleep(3)
-
-                #check if that account exist
-                if cursor.fetchone() is not None:
-                    user_id = get_user_id(username, crypted_passwd)
-                    attempts = MAX_ATTEMPTS
-                    #put the attempts to the max attempts and then call to the atm function
-                    atm(username, user_id)
-                    break
+                if(not (username and not username.isspace())):
+                    print("You can't leave username field empty")
+                    print("Try it again!")
+                    login_account()
                 else:
-                    print("Login failed!\nTry it again...")
+                    passwd = getpass.getpass(prompt = "Password: ", stream = None)
+                    if(not (passwd and not passwd.isspace())):
+                        print("You can't leave password field empty!")
+                        print("Try it again!")
+                        login_account()
+                    else:
+                    #encrypting and encoding password to save en the database
+                    crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+                    #login code
+                    sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
+                    data = (username, crypted_passwd)
+                    cursor.execute(sql_sentence, data)
+                    connection.commit()
+                    print("login...")
+                    time.sleep(3)
+
+                    #check if that account exist
+                    if cursor.fetchone() is not None:
+                        user_id = get_user_id(username, crypted_passwd)
+                        attempts = MAX_ATTEMPTS
+                        #put the attempts to the max attempts and then call to the atm function
+                        atm(username, user_id)
+                        break
+                    else:
+                        print("Login failed!\nTry it again...")
         #waiting for errors
         except Exception as e:
             print(e)
@@ -168,52 +191,64 @@ def create_account():
     with sqlite3.connect('data.db') as connection:
         #create a cursor
         cursor = connection.cursor()
+        money = 0
         try:
             #getting for the username
-            username = input("Enter the user name: ")
-            cursor.execute("SELECT * from users WHERE username = (?)", (username,))
-            connection.commit()
-
-            #ask to the database if that username its already in use
-            if cursor.fetchone() is not None:
-                print("This name is already in use...")
-                exit()
-            else:
-                #getting for the password 2 times to check if one of the passwords its wrong
-                passwd = getpass.getpass(prompt = "Password: ", stream = None)
-                retyped_passwd = getpass.getpass(prompt = "Re-type your password: ", stream = None)
-                money = 0
-                #checking the passwords match
-                if retyped_passwd == passwd:
-                    #encrypting and encoding password to save en the database
-                    crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
-                    sql_sentence = "INSERT INTO users(username, password, money) VALUES(?, ?, ?)"
-                    data = (username, crypted_passwd, money)
-
-                    print("Creating acount...")
-
-                    time.sleep(3)
-                    cursor.execute(sql_sentence, data)
-                    connection.commit()
-                    print("User created successfully")
-                    #asking the user if he wants to enter the ATM, very obvious
-                    option = input("Do you need to enter into the ATM? y/N:")
-                    if option.lower() == 'y':
-                        print("login...")
-                        time.sleep(3)
-                        #get to the user id using the get_user_id function
-                        user_id = get_user_id(username, crypted_passwd)
-                        atm(username, user_id)
-                    elif option.lower() == 'n':
-                        print("I'll see you later then!")
-                        exit()
-                    else:
-                        print("I dont know that option!")
-                        create_account()
-                else:
-                    print("The passwords do not match!")
-                    print("Try it again! ")
+            #checking if the fields username and password are empty
+            #to avoid errors
+            username = input("Enter the username: ")
+            if(not (username and not username.isspace())):
+                    print("You can't leave username field empty")
+                    print("Try it again!")
                     create_account()
+            else:
+                cursor.execute("SELECT * from users WHERE username = (?)", (username,))
+                connection.commit()
+
+                #ask to the database if that username its already in use
+                if cursor.fetchone() is not None:
+                    print("This name is already in use...")
+                    exit()
+                else:
+                    #getting for the password 2 times to check if one of the passwords its wrong
+                    passwd = getpass.getpass(prompt = "Password: ", stream = None)
+                    retyped_passwd = getpass.getpass(prompt = "Re-type your password: ", stream = None)
+                    if(not (passwd and passwd.isspace())):
+                        print("You can't leave password field empty")
+                        print("Try it again!")
+                        create_account()
+                    else:
+                        #checking the passwords match
+                        if retyped_passwd == passwd:
+                            #encrypting and encoding password to save en the database
+                            crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+                            sql_sentence = "INSERT INTO users(username, password, money) VALUES(?, ?, ?)"
+                            data = (username, crypted_passwd, money)
+
+                            print("Creating acount...")
+
+                            time.sleep(3)
+                            cursor.execute(sql_sentence, data)
+                            connection.commit()
+                            print("User created successfully")
+                            #asking the user if he wants to enter the ATM, very obvious
+                            option = input("Do you need to enter into the ATM? y/N:")
+                            if option.lower() == 'y':
+                                print("login...")
+                                time.sleep(3)
+                                #get to the user id using the get_user_id function
+                                user_id = get_user_id(username, crypted_passwd)
+                                atm(username, user_id)
+                            elif option.lower() == 'n':
+                                print("I'll see you later then!")
+                                exit()
+                            else:
+                                print("I dont know that option!")
+                                create_account()
+                        else:
+                            print("The passwords do not match!")
+                            print("Try it again! ")
+                            create_account()
         #waiting for errors
         except Exception as e:
             print(e)
