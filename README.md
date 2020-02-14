@@ -1,7 +1,7 @@
 # ATM AND LOGIN SYSTEM
 
 The Login system it has features like login, create account and save the password encrypted in sha256, delete account.
-The ATM it has features like deposit money, withdraw money, check the status of account and deposit to another customer registered in the system.
+The ATM it has features like deposit money, withdraw money, check the status of account and deposit to another user registered in the system.
 
 ## Installation
 
