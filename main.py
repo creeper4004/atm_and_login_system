@@ -18,7 +18,9 @@ def main():
             4 to exit or use CTRL+C
             """)
         #asking for the operation to do
-        option = int(input("Write your option: "))
+        option = get_choice(["1","2","3","4"])
+        option = int(option)
+        #option = int(input("Write your option: "))
         if option == 1:
             login_account()
         elif option == 2:
@@ -28,14 +30,20 @@ def main():
         elif option == 4:
             print("\nbye\n")
             exit()
-        else:
-            print("I dont know that option!")
-            exit()
     except KeyboardInterrupt:
         print("\nbye\n")
     #waiting for errors
     except Exception as e:
         print(e)
+
+#This function just receives and treats values correctly
+def get_choice(choices):
+  
+    choice = input("Choose one of [%s]:" % ", ".join(choices))
+    if not choice in choices:
+        print('I dont know that option!')
+        return get_choice(choices)
+    return choice
 
 #This function check that the user exists and then delete it, if so desired.
 def delete_account():
@@ -74,8 +82,8 @@ def delete_account():
                     print("Acount deleted succefully!")
 
                 elif option.lower() == "n":
-                    print("Then you are welcome.")
-                    #connection.close()
+                    print("I'll see you later then!")
+                    exit()
                 else:
                     print("I dont know that option.")
                     print("Try it again")
@@ -201,7 +209,7 @@ def create_account():
                         exit()
                     else:
                         print("I dont know that option!")
-                        exit()
+                        create_account()
                 else:
                     print("The passwords do not match!")
                     print("Try it again! ")
