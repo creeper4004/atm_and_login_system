@@ -69,7 +69,7 @@ def delete_account():
                     #encrypting and encoding password to save en the database
                     crypted_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
                     sql_sentence = "SELECT * from users WHERE username = (?) AND password = (?)"
-                    data = (user, crypted_passwd)
+                    data = (username, crypted_passwd)
 
                     cursor.execute(sql_sentence, data)
                     connection.commit()
@@ -79,7 +79,9 @@ def delete_account():
 
                     #check if that account exist
                     if cursor.fetchone() is not None:
-                        option = input("Are you complete sure to delete your account? y/N: ")
+                        user_id = get_user_id(username, crypted_passwd)
+                        actual_money = show_money(user_id)
+                        option = input("Are you complete sure to delete your account? with ${} y/N: ".format(actual_money))
                         if option.lower() == "y":
 
                             print("Deleting acount...")
@@ -87,7 +89,7 @@ def delete_account():
 
                             #delete account code
                             sql_sentence = "DELETE from users WHERE username = (?) AND password = (?)"
-                            data = (user, crypted_passwd)
+                            data = (username, crypted_passwd)
                             cursor.execute(sql_sentence, data)
                             connection.commit()
                             print("Account deleted succefully!")
@@ -214,7 +216,8 @@ def create_account():
                     #getting for the password 2 times to check if one of the passwords its wrong
                     passwd = getpass.getpass(prompt = "Password: ", stream = None)
                     retyped_passwd = getpass.getpass(prompt = "Re-type your password: ", stream = None)
-                    if(not (passwd and passwd.isspace())):
+                    #checking if the password field is empty
+                    if(not (passwd and not passwd.isspace())):
                         print("You can't leave password field empty")
                         print("Try it again!")
                         create_account()
