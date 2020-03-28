@@ -25,7 +25,21 @@ def atm(username, user_id):
             take_money_out(user_id)
         elif option == 3:
             actual_money = show_money(user_id)
-            print("Your money is: {}".format(actual_money))
+            print("Your money is: ${}".format(actual_money))
+            time.sleep(3)
+            while True:
+
+                option = input("You want to perform another operation in the best ATM ever created? y/N: ")
+                if option.lower() == 'y':
+                    time.sleep(3)
+                    atm(username, user_id)
+                elif option.lower() == 'n':
+                    print("I'll see you later then!")
+                    time.sleep(3)
+                    exit()
+                else:
+                    print("i dont know that option")
+                    time.sleep(3)
         elif option == 4:
             deposit_to_other_client(user_id, username)
         elif option == 5:
@@ -58,12 +72,24 @@ def deposit_money(username, user_id):
                 sql_sentence = "UPDATE users SET money = (?) where username = (?)"
                 data = (input_money, username)
 
-                print("Prosessing...")
+                print("Prosessing...") 
                 time.sleep(3)
 
                 cursor.execute(sql_sentence, data)
                 connection.commit()
                 print("Transaction has bee completed successfully!")
+                time.sleep(2)
+                while True:
+                    option = input("You want to perform another operation in the best ATM ever created? y/N: ")
+                    if option.lower() == 'y':
+                        atm(username, user_id)
+                    elif option.lower() == 'n':
+                        print("I'll see you later then!")
+                        time.sleep(3)
+                        exit()
+                    else:
+                        print("I dont know that option!")
+                        time.sleep(3)
             else:
                 print("Here we're supposed to write an amount!")
                 print("Try it again...")
@@ -184,46 +210,59 @@ def deposit_to_other_client(user_id, username):
                     else:
                         #last warning before transfer
                         #as if it were real money lol
-                        option = input("Are you complete sure to transfer {} to {} y/N: ".format(money_to, username_to))
-                        if option.lower() == "y":
-                            print("Prosessing...")
-                            time.sleep(3)
-                            #getting the actual money from the usere to transfer
-                            cursor.execute("SELECT money from users WHERE username = (?)", (username_to,))
-                            connection.commit()
-                            username_to_actual_money = cursor.fetchone()
-                            #username_to_actual_money it is received in the form of tuple and then becomes to int
-                            username_to_actual_money = int(username_to_actual_money[0])
-                            #here remains the actual_money to the money to transfer
-                            actual_money = actual_money - money_to
-                            #here add the money to transfer to the user money to transfer
-                            money_to = money_to + username_to_actual_money
+                        while True:
+                            option = input("Are you complete sure to transfer {} to {} y/N: ".format(money_to, username_to))
+                            if option.lower() == "y":
+                                print("Prosessing...")
+                                time.sleep(3)
+                                #getting the actual money from the usere to transfer
+                                cursor.execute("SELECT money from users WHERE username = (?)", (username_to,))
+                                connection.commit()
+                                username_to_actual_money = cursor.fetchone()
+                                #username_to_actual_money it is received in the form of tuple and then becomes to int
+                                username_to_actual_money = int(username_to_actual_money[0])
+                                #here remains the actual_money to the money to transfer
+                                actual_money = actual_money - money_to
+                                #here add the money to transfer to the user money to transfer
+                                money_to = money_to + username_to_actual_money
 
-                            #then updata the database using the new data
-                            cursor.execute("UPDATE users SET money = (?) where username = (?)", (money_to, username_to))
-                            connection.commit()
-                            cursor.execute("UPDATE users SET money = (?) where username = (?)", (actual_money, username))
-                            connection.commit()
-                            print("Transaction has bee completed successfully!")
-                            print("Your money is now: {}".format(actual_money))
+                                #then updata the database using the new data
+                                cursor.execute("UPDATE users SET money = (?) where username = (?)", (money_to, username_to))
+                                connection.commit()
+                                cursor.execute("UPDATE users SET money = (?) where username = (?)", (actual_money, username))
+                                connection.commit()
+                                print("Transaction has bee completed successfully!")
+                                print("Your money is now: ${}".format(actual_money))
+                            
+                                while True: 
+                                    option = input("You want to perform another operation in the best ATM ever created? y/N: ")
+                                    if option.lower() == 'y':
+                                        atm(username, user_id)
+                                    elif option.lower() == 'n':
+                                        print("I'll see you later then!")
+                                        time.sleep(3)
+                                        exit()
+                                    else:
+                                        print("I dont know that option!")
+                                        time.sleep(3)
 
-                        elif option.lower() == 'n':
-                            #asking the user if he wants to enter the ATM, very obvious
-                            print("Operation cancelled")
-                            option = input("Do you need to enter into the ATM again? y/N:")
-                            if option.lower() == 'y':
-                                print("login...")
-                                time.splee(3)
-                                atm(username, user_id)
                             elif option.lower() == 'n':
-                                print("I'll see you later then!")
-                                exit()
+                                #asking the user if he wants to enter the ATM, very obvious
+                                print("Operation cancelled")
+                                while True:
+
+                                    option = input("Do you need to enter into the ATM again? y/N:")
+                                    if option.lower() == 'y':
+                                        atm(username, user_id)
+                                    elif option.lower() == 'n':
+                                        print("I'll see you later then!")
+                                        exit()
+                                    else:
+                                        print("I dont know that option!")
+                                        time.sleep(3)
                             else:
                                 print("I dont know that option!")
-                                deposit_to_other_client(user_id, username)
-                        else:
-                            print("I dont know that option!")
-                            deposit_to_other_client(user_id, username)
+                                time.sleep(3)
                 else:
                     print("Here we're supposed to write an amount!")
                     print("Try it again...")
