@@ -8,7 +8,7 @@ The ATM it has features like deposit money, withdraw money, check the status of 
 ```bash
 git clone https://github.com/creeper4004/atm_and_login_system.git
 cd atm_and_login_system
-python3 -m pip install -r requirements.txt
+python3 -m pip install -r requirements.txt --user
 chmod +x main.py
 ./main.py
 ```
