@@ -38,7 +38,8 @@ def atm(username, user_id):
                     time.sleep(3)
                     exit()
                 else:
-                    print("i dont know that option")
+                    print("I dont know that option!")
+                    print("Try it again!")
                     time.sleep(3)
         elif option == 4:
             deposit_to_other_client(user_id, username)

@@ -81,26 +81,39 @@ def delete_account():
                     if cursor.fetchone() is not None:
                         user_id = get_user_id(username, crypted_passwd)
                         actual_money = show_money(user_id)
-                        option = input("Are you complete sure to delete your account? with ${} y/N: ".format(actual_money))
-                        if option.lower() == "y":
+                        while True:
 
-                            print("Deleting acount...")
-                            time.sleep(3)
+                            option = input("Are you complete sure to delete your account? with ${} y/N: ".format(actual_money))
+                            if option.lower() == "y":
+    
+                                print("Deleting acount...")
+                                time.sleep(3)
+    
+                                #delete account code
+                                sql_sentence = "DELETE from users WHERE username = (?) AND password = (?)"
+                                data = (username, crypted_passwd)
+                                cursor.execute(sql_sentence, data)
+                                connection.commit()
+                                print("Account deleted succefully!")
 
-                            #delete account code
-                            sql_sentence = "DELETE from users WHERE username = (?) AND password = (?)"
-                            data = (username, crypted_passwd)
-                            cursor.execute(sql_sentence, data)
-                            connection.commit()
-                            print("Account deleted succefully!")
-
-                        elif option.lower() == "n":
-                            print("I'll see you later then!")
-                            exit()
-                        else:
-                            print("I dont know that option.")
-                            print("Try it again")
-                            delete_account()
+                            elif option.lower() == "n":
+                                print("Ok!")
+                                while True:
+                                    option = input("You want to perform another operation in the best login system ever created? y/N: ")
+                                    if option.lower() == 'y':
+                                        time.sleep(3)
+                                        main()
+                                    elif option.lower() == 'n':
+                                        print("I'll see you later then!")
+                                        time.sleep(3)
+                                        exit()
+                                    else:
+                                        print("I dont know that option!")
+                                        print("Try it again!")
+                                        time.sleep(3)
+                            else:
+                                print("I dont know that option.")
+                                print("Try it again")
                     else:
                         print("Login failed")
         #waiting for errors
