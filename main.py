@@ -95,6 +95,7 @@ def delete_account():
                                 cursor.execute(sql_sentence, data)
                                 connection.commit()
                                 print("Account deleted succefully!")
+                                exit()
 
                             elif option.lower() == "n":
                                 print("Ok!")
