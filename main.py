@@ -15,7 +15,7 @@ def main():
             1 to login account.
             2 to create account.
             3 to delete your account.
-            4 to exit or use CTRL+C
+            4 to exit or use CTRL+C to back to this manu
             """)
         #asking for the operation to do
         option = get_choice(["1","2","3","4"])
@@ -121,7 +121,10 @@ def delete_account():
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            main()
+            #print("\nbye\n")
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
@@ -196,7 +199,10 @@ def login_account():
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            main()
+            #print("\nbye\n")
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
@@ -271,7 +277,10 @@ def create_account():
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            main()
+            #print("\nbye\n")
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])

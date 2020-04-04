@@ -13,7 +13,7 @@ def atm(username, user_id):
             2 to withdraw money
             3 to see how much money you have
             4 to deposit money to other client
-            5 to quit or use CTRL+C
+            5 to quit or use CTRL+C to back to this menu
             """)
         #asking for the operation to do
         option = get_choice(["1","2","3","4","5"])
@@ -22,9 +22,9 @@ def atm(username, user_id):
         if option == 1:
             deposit_money(username, user_id)
         elif option == 2:
-            take_money_out(user_id)
+            withdraw_money(username, user_id)
         elif option == 3:
-            actual_money = show_money(user_id)
+            actual_money = show_money(username, user_id)
             print("Your money is: ${}".format(actual_money))
             time.sleep(3)
             while True:
@@ -42,7 +42,7 @@ def atm(username, user_id):
                     print("Try it again!")
                     time.sleep(3)
         elif option == 4:
-            deposit_to_other_client(user_id, username)
+            deposit_to_other_client(username, user_id)
         elif option == 5:
             print("\nbye\n")
             exit()
@@ -100,13 +100,15 @@ def deposit_money(username, user_id):
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            atm(username, user_id)
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 
 #This function remains money from the database
-def withdraw_money(user_id):
+def withdraw_money(username, user_id):
     #connecting with the database sqlite
     with sqlite3.connect('data.db') as connection:
         #create a cursor
@@ -125,10 +127,23 @@ def withdraw_money(user_id):
                 #just checking that the user has enough money in the database.
                 if actual_money < output_money:
                     print("You dont have enough money!")
+                    while True:
+                        option = input("You want to perform another operation in the best ATM ever created? y/N: ")
+                        if option.lower() == 'y':
+                            time.sleep(3)
+                            atm(username, user_id)
+                        elif option.lower() == 'n':
+                            print("I'll see you later then!")
+                            time.sleep(3)
+                            exit()
+                        else:
+                            print("I dont know that option!")
+                            print("Try it again!")
+                            time.sleep(3)
                     exit()
                 else:
 
-                    #checking that the user has enough money in the database
+                    #updating current money minus withdrawn
                     actual_money = actual_money - output_money
 
                     #and then upload the data
@@ -145,13 +160,15 @@ def withdraw_money(user_id):
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            atm(username, user_id)
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 
 #This function just receive the user id to return the actual money from that user id
-def show_money(user_id):
+def show_money(username, user_id):
     #connecting with the database sqlite
     with sqlite3.connect('data.db') as connection:
         #creating a cursor
@@ -169,13 +186,13 @@ def show_money(user_id):
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
 
 #This function remains to the user and then add that money to the specified user
-def deposit_to_other_client(user_id, username):
+def deposit_to_other_client(username, user_id):
     #connecting with the database sqlite
     with sqlite3.connect('data.db') as connection:
         #creating a cursor
@@ -275,7 +292,9 @@ def deposit_to_other_client(user_id, username):
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
-            print("\nbye\n")
+            print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            atm(username, user_id)
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
