@@ -65,7 +65,7 @@ def deposit_money(username, user_id):
             if(input_money.isdigit()):
                 input_money = int(input_money)
                 #get to the actual amount of money in the account statement; using the show_money function
-                actual_money = show_money(user_id)
+                actual_money = show_money(username, user_id)
                 #then add the acual money and the input money to upload to the database
                 input_money = input_money + actual_money
 
@@ -120,7 +120,7 @@ def withdraw_money(username, user_id):
             if(output_money.isdigit()):
                 output_money = int(output_money)
                 #get to the actual amount of money in the account statement; using the show_money function
-                actual_money = show_money(user_id)
+                actual_money = show_money(username, user_id)
 
                 print("Prosessing...")
                 time.sleep(3)
@@ -187,6 +187,8 @@ def show_money(username, user_id):
             print(e)
         except KeyboardInterrupt:
             print("\nGoing to the main menu...\n")
+            time.sleep(2)
+            atm(username, user_id)
         #waiting for errors from the database
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
@@ -210,7 +212,7 @@ def deposit_to_other_client(username, user_id):
                 if(money_to.isdigit()):
                     money_to = int(money_to)
                     #get to the actual amount of money in the account statement; using the show_money function
-                    actual_money = show_money(user_id)
+                    actual_money = show_money(username, user_id)
 
                     #just checking that the user has enough money in the database.
                     if actual_money < money_to:
